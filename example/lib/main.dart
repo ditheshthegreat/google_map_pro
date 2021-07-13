@@ -24,7 +24,8 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     initPlatformState();
-    _googleMapsPro = GoogleMapsPro('AIzaSyCsjMF12VISe-xks-AbD0Ae9UVmwTiMzyk');
+    ///Your GOOGLE MAP API key
+    _googleMapsPro = GoogleMapsPro('');
   }
 
   // Platform messages are asynchronous, so we initialize in an async method.
