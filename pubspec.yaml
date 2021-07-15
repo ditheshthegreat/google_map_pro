@@ -1,6 +1,6 @@
 name: google_maps_pro
 description: A flutter plugin that provides latlong from postal code and reverse.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/ditheshthegreat/google_map_pro
 
 environment:
@@ -11,6 +11,8 @@ dependencies:
   flutter:
     sdk: flutter
   dio: ^4.0.0
+  flutter_bloc: ^7.0.1
+  equatable: ^2.0.3
 
 
 dev_dependencies:

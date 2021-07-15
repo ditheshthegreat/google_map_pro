@@ -270,7 +270,7 @@ class AddressComponents {
       ],
       'city': <String>[
         'political'
-        'locality',
+            'locality',
         'sublocality',
         'sublocality_level_1',
         'sublocality_level_2',
@@ -287,8 +287,6 @@ class AddressComponents {
       for (String shouldBe in shouldBeComponent.keys) {
         if (shouldBeComponent[shouldBe]!.contains(element['types']![0])) {
           address[shouldBe] = (PlaceName.fromJson(element));
-          print('DATA :;');
-          print(address);
         }
       }
     }
