@@ -1,17 +1,19 @@
 part of 'google_maps_pro.dart';
 
 class AutoCompleteAddressSearch extends StatefulWidget {
-  const AutoCompleteAddressSearch(
-      {Key? key,
-      required this.geocodeResponse,
-      this.optionsViewBuilder,
-      this.types = 'geocode',
-      this.componentsFilter,
-      this.sessionToken,
-      this.offset,
-      this.inputDecoration,
-      this.disableLogo = false})
-      : super(key: key);
+  const AutoCompleteAddressSearch({
+    Key? key,
+    required this.apiKey,
+    required this.geocodeResponse,
+    this.optionsViewBuilder,
+    this.types = 'geocode',
+    this.componentsFilter,
+    this.sessionToken,
+    this.offset,
+    this.inputDecoration,
+    this.disableLogo = false,
+  }) : super(key: key);
+  final String apiKey;
 
   /// If not provided, will build a standard Material-style list of results by
   /// default.

@@ -41,6 +41,7 @@ class _MyAppState extends State<MyApp> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AutoCompleteAddressSearch(
+                  apiKey: 'GOOGLE MAP API KEY',
                   geocodeResponse: (GeocodeResponse geocodeResponse) {
                     setState(() {
                       _geocodeResponse = geocodeResponse;
