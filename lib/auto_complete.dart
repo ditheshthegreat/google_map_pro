@@ -9,7 +9,8 @@ class AutoCompleteAddressSearch extends StatefulWidget {
       this.componentsFilter,
       this.sessionToken,
       this.offset,
-      this.inputDecoration})
+      this.inputDecoration,
+      this.disableLogo = false})
       : super(key: key);
 
   /// If not provided, will build a standard Material-style list of results by
@@ -43,6 +44,12 @@ class AutoCompleteAddressSearch extends StatefulWidget {
 
   /// This will return the full details of search address
   final Function(GeocodeResponse) geocodeResponse;
+
+  ///Google logo will be displayed in the search list due to policy
+  ///<https://developers.google.com/maps/documentation/places/web-service/policies#powered>
+  ///
+  /// *If you set to true this package is not responsible for it.
+  final bool disableLogo;
 
   @override
   _AutoCompleteAddressSearchState createState() => _AutoCompleteAddressSearchState();
@@ -103,7 +110,15 @@ class _AutoCompleteAddressSearchState extends State<AutoCompleteAddressSearch> {
               inputDecoration: widget.inputDecoration,
             );
           },
-          optionsViewBuilder: widget.optionsViewBuilder,
+          optionsViewBuilder: widget.optionsViewBuilder ??
+              (BuildContext context, AutocompleteOnSelected<Predictions> onSelected, Iterable<Predictions> options) {
+                return _AutocompleteOptions<Predictions>(
+                  displayStringForOption: _displayStringForOption,
+                  onSelected: onSelected,
+                  options: options,
+                  disableLogo: widget.disableLogo,
+                );
+              },
         ),
       ]),
     );
@@ -141,6 +156,71 @@ class _AutocompleteField extends StatelessWidget {
       onFieldSubmitted: (String value) {
         onFieldSubmitted();
       },
+    );
+  }
+}
+
+// The default Material-style Autocomplete options.
+class _AutocompleteOptions<T extends Object> extends StatelessWidget {
+  const _AutocompleteOptions({
+    Key? key,
+    required this.displayStringForOption,
+    required this.onSelected,
+    required this.options,
+    required this.disableLogo,
+  }) : super(key: key);
+
+  final AutocompleteOptionToString<T> displayStringForOption;
+
+  final AutocompleteOnSelected<T> onSelected;
+
+  final Iterable<T> options;
+
+  final bool disableLogo;
+
+  @override
+  Widget build(BuildContext context) {
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Material(
+        elevation: 4.0,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.zero,
+              itemCount: options.length,
+              itemBuilder: (BuildContext context, int index) {
+                final T option = options.elementAt(index);
+                return InkWell(
+                  onTap: () {
+                    onSelected(option);
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(displayStringForOption(option)),
+                  ),
+                );
+              },
+            ),
+            Visibility(
+              visible: !disableLogo,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  Image.asset(
+                    'assets/google_logo.png',
+                    height: 30.0,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

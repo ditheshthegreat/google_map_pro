@@ -37,6 +37,11 @@ class GeocodeResponse {
     map['status'] = _status;
     return map;
   }
+
+  @override
+  String toString() {
+    return 'GeocodeResponse{_plusCode: $_plusCode, _results: $_results, _status: $_status}';
+  }
 }
 
 class Results {
@@ -70,10 +75,10 @@ class Results {
   }
 
   Results.fromJson(dynamic json) {
+    _formattedAddress = json['formatted_address'];
     _addressComponents =
         json['address_components'] != null ? AddressComponents.fromJson(json['address_components']) : null;
 
-    _formattedAddress = json['formatted_address'];
     _geometry = json['geometry'] != null ? Geometry.fromJson(json['geometry']) : null;
     _placeId = json['place_id'];
     _types = json['types'] != null ? json['types'].cast<String>() : [];
@@ -81,16 +86,21 @@ class Results {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
+    map['formatted_address'] = _formattedAddress;
     if (_addressComponents != null) {
       map['address_components'] = _addressComponents?.toJson();
     }
-    map['formatted_address'] = _formattedAddress;
     if (_geometry != null) {
       map['geometry'] = _geometry?.toJson();
     }
     map['place_id'] = _placeId;
     map['types'] = _types;
     return map;
+  }
+
+  @override
+  String toString() {
+    return 'Results{_addressComponents: $_addressComponents, _formattedAddress: $_formattedAddress, _geometry: $_geometry, _placeId: $_placeId, _types: $_types}';
   }
 }
 
@@ -135,6 +145,11 @@ class Geometry {
       map['viewport'] = _viewport?.toJson();
     }
     return map;
+  }
+
+  @override
+  String toString() {
+    return 'Geometry{_location: $_location}';
   }
 }
 
@@ -192,6 +207,11 @@ class Location {
     map['lng'] = _lng;
     return map;
   }
+
+  @override
+  String toString() {
+    return 'Location{_lat: $_lat, _lng: $_lng}';
+  }
 }
 
 class Bounds {
@@ -246,13 +266,13 @@ class AddressComponents {
 
   Map<String, dynamic> toJson() {
     var map = <String, dynamic>{};
-    map['home'] = home;
-    map['postalCode'] = postalCode;
-    map['street'] = street;
-    map['region'] = region;
-    map['city'] = city;
-    map['country'] = country;
-    map['plus_code'] = plusCode;
+    map['home'] = home?.toJson() ?? '';
+    map['postalCode'] = postalCode?.toJson() ?? '';
+    map['street'] = street?.toJson() ?? '';
+    map['region'] = region?.toJson() ?? '';
+    map['city'] = city?.toJson() ?? '';
+    map['country'] = country?.toJson() ?? '';
+    map['plus_code'] = plusCode?.toJson() ?? '';
     return map;
   }
 
@@ -292,6 +312,11 @@ class AddressComponents {
     }
     return address;
   }
+
+  @override
+  String toString() {
+    return 'AddressComponents{home: $home, postalCode: $postalCode, street: $street, region: $region, city: $city, country: $country, plusCode: $plusCode}';
+  }
 }
 
 class PlusCode {
@@ -318,21 +343,33 @@ class PlusCode {
     map['global_code'] = _globalCode;
     return map;
   }
+
+  @override
+  String toString() {
+    return 'PlusCode{_compoundCode: $_compoundCode, _globalCode: $_globalCode}';
+  }
 }
 
 class PlaceName {
   PlaceName();
 
-  String _longName = '';
-  String short = '';
+  String longName = '';
+  String shortName = '';
 
   PlaceName.fromJson(dynamic json) {
-    _longName = json['long_name'];
-    short = json['short_name'];
+    longName = json['long_name'];
+    shortName = json['short_name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    var map = <String, dynamic>{};
+    map['long_name'] = longName;
+    map['short_name'] = shortName;
+    return map;
   }
 
   @override
   String toString() {
-    return '$_longName';
+    return '$longName';
   }
 }

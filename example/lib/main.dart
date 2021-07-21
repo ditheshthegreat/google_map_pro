@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_json_view/flutter_json_view.dart';
 import 'package:google_maps_pro/google_maps_pro.dart';
 import 'package:google_maps_pro/model/components_filter.dart';
 import 'package:google_maps_pro/model/geocode_response.dart';
@@ -22,6 +23,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
 
+    ///Your GOOGLE MAP API key
     _googleMapsPro = GoogleMapsPro('GOOGLE MAP API KEY');
   }
 
@@ -40,8 +42,11 @@ class _MyAppState extends State<MyApp> {
               children: [
                 AutoCompleteAddressSearch(
                   geocodeResponse: (GeocodeResponse geocodeResponse) {
-                    print(geocodeResponse.results!.first.geometry?.location?.toJson());
+                    setState(() {
+                      _geocodeResponse = geocodeResponse;
+                    });
                   },
+                  disableLogo: false,
                 ),
                 SizedBox(
                   height: 16.0,
@@ -93,14 +98,11 @@ class _MyAppState extends State<MyApp> {
                       setState(() {});
                     },
                     child: Text('Get Address')),
-                Padding(
+                SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
                   padding: const EdgeInsets.all(16.0),
-                  child: Text(_geocodeResponse.results == null
-                      ? ''
-                      : _geocodeResponse.results!
-                          .singleWhere((element) => element.types!.contains('postal_code'))
-                          .toJson()
-                          .toString()),
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal, child: JsonView.map(_geocodeResponse.toJson())),
                 )
               ],
             ),
