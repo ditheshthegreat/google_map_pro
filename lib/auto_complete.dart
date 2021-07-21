@@ -1,7 +1,7 @@
 part of 'google_maps_pro.dart';
 
 class AutoCompleteAddressSearch extends StatefulWidget {
-  const AutoCompleteAddressSearch({
+  AutoCompleteAddressSearch({
     Key? key,
     required this.apiKey,
     required this.geocodeResponse,
@@ -12,7 +12,10 @@ class AutoCompleteAddressSearch extends StatefulWidget {
     this.offset,
     this.inputDecoration,
     this.disableLogo = false,
-  }) : super(key: key);
+  }) : super(key: key) {
+    ApiProvider.mapApiKey = this.apiKey;
+  }
+
   final String apiKey;
 
   /// If not provided, will build a standard Material-style list of results by
@@ -45,7 +48,7 @@ class AutoCompleteAddressSearch extends StatefulWidget {
   final int? offset;
 
   /// This will return the full details of search address
-  final Function(GeocodeResponse) geocodeResponse;
+  final Function(Results?) geocodeResponse;
 
   ///Google logo will be displayed in the search list due to policy
   ///<https://developers.google.com/maps/documentation/places/web-service/policies#powered>
@@ -87,7 +90,7 @@ class _AutoCompleteAddressSearchState extends State<AutoCompleteAddressSearch> {
               'key': ApiProvider.mapApiKey,
               'place_id': '${onSelected.placeId}'
             };
-            widget.geocodeResponse(await _mapSearchCubit.getGeocodeData(_queryParameter));
+            widget.geocodeResponse((await _mapSearchCubit.getGeocodeData(_queryParameter)).results?.first);
           },
           optionsBuilder: (TextEditingValue textEditingValue) {
             if (textEditingValue.text.isNotEmpty && textEditingValue.text.length >= 3) {
@@ -215,6 +218,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
                   ),
                   Image.asset(
                     'assets/google_logo.png',
+                    package: 'google_maps_pro',
                     height: 30.0,
                   ),
                 ],

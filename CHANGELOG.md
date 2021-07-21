@@ -1,3 +1,5 @@
+## 0.1.2
+* Added api key in AutoCompleteAddressSearch
 ## 0.1.1
 * Minor bug fixes
 ## 0.1.0
