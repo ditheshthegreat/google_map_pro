@@ -37,7 +37,8 @@ flutter:
         pluginClass: GoogleMapsProPlugin
 
   # To add assets to your plugin package, add an assets section, like this:
-  # assets:
+  assets:
+    - image/google_logo.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
   #
