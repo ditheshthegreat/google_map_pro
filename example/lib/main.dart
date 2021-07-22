@@ -23,7 +23,7 @@ class _MyAppState extends State<MyApp> {
   late GoogleMapsPro _googleMapsPro;
 
   ///Your GOOGLE MAP API key
-  String apiKey = 'AIzaSyCsjMF12VISe-xks-AbD0Ae9UVmwTiMzyk';
+  String apiKey = 'GOOGLE API KEY';
 
   List<Results> _geocodeResponse = <Results>[];
 
