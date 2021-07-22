@@ -1,3 +1,5 @@
+## 0.1.3
+* Suggestion layout position fixed
 ## 0.1.2
 * Added api key in AutoCompleteAddressSearch
 ## 0.1.1

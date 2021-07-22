@@ -57,14 +57,22 @@ class AutoCompleteAddressSearch extends StatefulWidget {
   final bool disableLogo;
 
   @override
-  _AutoCompleteAddressSearchState createState() => _AutoCompleteAddressSearchState();
+  _AutoCompleteAddressSearchState createState() =>
+      _AutoCompleteAddressSearchState();
 }
 
 class _AutoCompleteAddressSearchState extends State<AutoCompleteAddressSearch> {
   final _MapSearchCubit _mapSearchCubit = _MapSearchCubit();
+
   Iterable<Predictions> _prediction = const Iterable<Predictions>.empty();
 
-  static String _displayStringForOption(Predictions option) => option.description;
+  static String _displayStringForOption(Predictions option) =>
+      option.description;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,158 +82,69 @@ class _AutoCompleteAddressSearchState extends State<AutoCompleteAddressSearch> {
         if (state is AutoCompleteSearchResponse) {
           print('STATE ::');
 
-          _prediction = state.autoCompleteModel.predictions!.whereType<Predictions>();
-          print(List<String>.from(_prediction.map((e) => '${e.description}\n')));
+          _prediction =
+              state.autoCompleteModel.predictions!.whereType<Predictions>();
+          print(
+              List<String>.from(_prediction.map((e) => '${e.description}\n')));
 
           setState(() {});
         }
       },
-      child: Column(children: [
-        Autocomplete<Predictions>(
-          displayStringForOption: _displayStringForOption,
-          onSelected: (Predictions onSelected) async {
-            print('onSelected :::');
-            print(onSelected);
-            Map<String, dynamic> _queryParameter = <String, dynamic>{
-              'key': ApiProvider.mapApiKey,
-              'place_id': '${onSelected.placeId}'
-            };
-            widget.geocodeResponse((await _mapSearchCubit.getGeocodeData(_queryParameter)).results?.first);
-          },
-          optionsBuilder: (TextEditingValue textEditingValue) {
-            if (textEditingValue.text.isNotEmpty && textEditingValue.text.length >= 3) {
-              _mapSearchCubit.getAutoSearchData({
-                'types': widget.types,
-                'components': widget.componentsFilter == null ? '' : widget.componentsFilter!.toJson(),
-                'input': textEditingValue.text,
-                'offset': widget.offset,
-                'sessiontoken': widget.sessionToken ?? DateTime.now().microsecondsSinceEpoch,
-                'key': ApiProvider.mapApiKey
-              });
-            }
+      child: _AddressAutoComplete<Predictions>(
+        context: context,
+        displayStringForOption: _displayStringForOption,
+        onSelected: (Predictions onSelected) async {
+          print('onSelected :::');
+          print(onSelected);
+          Map<String, dynamic> _queryParameter = <String, dynamic>{
+            'key': ApiProvider.mapApiKey,
+            'place_id': '${onSelected.placeId}'
+          };
+          widget.geocodeResponse(
+              (await _mapSearchCubit.getGeocodeData(_queryParameter))
+                  .results
+                  ?.first);
+        },
+        optionsBuilder: (TextEditingValue textEditingValue) {
+          if (textEditingValue.text.isNotEmpty &&
+              textEditingValue.text.length >= 3) {
+            _mapSearchCubit.getAutoSearchData({
+              'types': widget.types,
+              'components': widget.componentsFilter == null
+                  ? ''
+                  : widget.componentsFilter!.toJson(),
+              'input': textEditingValue.text,
+              'offset': widget.offset,
+              'sessiontoken':
+                  widget.sessionToken ?? DateTime.now().microsecondsSinceEpoch,
+              'key': ApiProvider.mapApiKey
+            });
+          }
 
-            return _prediction;
-          },
-          fieldViewBuilder: (BuildContext context, TextEditingController textEditingController, FocusNode focusNode,
-              VoidCallback onFieldSubmitted) {
-            return _AutocompleteField(
-              focusNode: focusNode,
-              textEditingController: textEditingController,
-              onFieldSubmitted: onFieldSubmitted,
-              inputDecoration: widget.inputDecoration,
-            );
-          },
-          optionsViewBuilder: widget.optionsViewBuilder ??
-              (BuildContext context, AutocompleteOnSelected<Predictions> onSelected, Iterable<Predictions> options) {
-                return _AutocompleteOptions<Predictions>(
-                  displayStringForOption: _displayStringForOption,
-                  onSelected: onSelected,
-                  options: options,
-                  disableLogo: widget.disableLogo,
-                );
-              },
-        ),
-      ]),
-    );
-  }
-}
-
-// The default Material-style Autocomplete text field.
-class _AutocompleteField extends StatelessWidget {
-  const _AutocompleteField({
-    Key? key,
-    required this.focusNode,
-    required this.textEditingController,
-    required this.onFieldSubmitted,
-    this.inputDecoration,
-  }) : super(key: key);
-
-  final FocusNode focusNode;
-
-  final VoidCallback onFieldSubmitted;
-
-  final TextEditingController textEditingController;
-  final InputDecoration? inputDecoration;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: textEditingController,
-      focusNode: focusNode,
-      decoration: inputDecoration ??
-          InputDecoration(
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8.0),
-              ),
-              labelText: 'Search address'),
-      onFieldSubmitted: (String value) {
-        onFieldSubmitted();
-      },
-    );
-  }
-}
-
-// The default Material-style Autocomplete options.
-class _AutocompleteOptions<T extends Object> extends StatelessWidget {
-  const _AutocompleteOptions({
-    Key? key,
-    required this.displayStringForOption,
-    required this.onSelected,
-    required this.options,
-    required this.disableLogo,
-  }) : super(key: key);
-
-  final AutocompleteOptionToString<T> displayStringForOption;
-
-  final AutocompleteOnSelected<T> onSelected;
-
-  final Iterable<T> options;
-
-  final bool disableLogo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Material(
-        elevation: 4.0,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListView.builder(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              itemCount: options.length,
-              itemBuilder: (BuildContext context, int index) {
-                final T option = options.elementAt(index);
-                return InkWell(
-                  onTap: () {
-                    onSelected(option);
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(displayStringForOption(option)),
-                  ),
-                );
-              },
-            ),
-            Visibility(
-              visible: !disableLogo,
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  Image.asset(
-                    'assets/google_logo.png',
-                    package: 'google_maps_pro',
-                    height: 30.0,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
+          return _prediction;
+        },
+        fieldViewBuilder: (BuildContext context,
+            TextEditingController textEditingController,
+            FocusNode focusNode,
+            VoidCallback onFieldSubmitted) {
+          return _AutocompleteField(
+            focusNode: focusNode,
+            textEditingController: textEditingController,
+            onFieldSubmitted: onFieldSubmitted,
+            inputDecoration: widget.inputDecoration,
+          );
+        },
+        optionsViewBuilder: widget.optionsViewBuilder ??
+            (BuildContext context,
+                AutocompleteOnSelected<Predictions> onSelected,
+                Iterable<Predictions> options) {
+              return _AutocompleteOptions<Predictions>(
+                displayStringForOption: _displayStringForOption,
+                onSelected: onSelected,
+                options: options,
+                disableLogo: widget.disableLogo,
+              );
+            },
       ),
     );
   }

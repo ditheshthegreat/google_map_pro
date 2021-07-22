@@ -16,7 +16,11 @@ class ComponentsFilter {
   final String country;
 
   ComponentsFilter(
-      {this.route = '', this.locality = '', this.administrativeArea = '', this.postalCode = '', this.country = ''});
+      {this.route = '',
+      this.locality = '',
+      this.administrativeArea = '',
+      this.postalCode = '',
+      this.country = ''});
 
   String toJson() {
     return 'route:$route|locality:$locality|administrative_area:$administrativeArea|postal_code:$postalCode|country'

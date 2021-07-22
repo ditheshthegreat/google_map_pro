@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_pro/business_logic/api_provider.dart';
@@ -13,6 +15,7 @@ import 'package:google_maps_pro/model/geocode_response.dart';
 part 'auto_complete.dart';
 part 'business_logic/_map_search_cubit.dart';
 part 'business_logic/_map_search_state.dart';
+part 'widgets/custom_widget.dart';
 
 class GoogleMapsPro {
   static const MethodChannel _channel = const MethodChannel('google_maps_pro');
@@ -49,13 +52,18 @@ class GoogleMapsPro {
           'key': _apiKey,
           'address': '$address',
           'latlng': '$lat,$lng',
-          'components': componentsFilter == null ? '' : componentsFilter.toJson(),
+          'components':
+              componentsFilter == null ? '' : componentsFilter.toJson(),
         };
       } else {
-        _queryParameter = <String, dynamic>{'key': _apiKey, 'place_id': '$placeId'};
+        _queryParameter = <String, dynamic>{
+          'key': _apiKey,
+          'place_id': '$placeId'
+        };
       }
       print(_queryParameter);
-      GeocodeResponse _geocodeResponse = await _mapSearchCubit.getGeocodeData(_queryParameter);
+      GeocodeResponse _geocodeResponse =
+          await _mapSearchCubit.getGeocodeData(_queryParameter);
       print('ADDRESS :: ');
       print(_geocodeResponse.toJson());
       return _geocodeResponse;
